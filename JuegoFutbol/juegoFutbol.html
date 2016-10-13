@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Page Title</title>
+		<style>
+		.jug1{
+			position:absolute;
+			border-radius:100%;
+			background-color:blue;
+		}
+		.jug2{
+			position:absolute;
+			border-radius:100%;
+			background-color:yellow;
+		}
+		</style>
+		<script>
+		var contadorJug = 0;
+		var contadorJug2 = 0;
+		
+		function creaCampo(){
+		document.getElementById("btn").disabled = true;
+			var campo = document.createElement("div");
+			campo.id = "campito";
+			campo.style.position = "absolute";
+			campo.style.border = "1px solid black"
+			campo.style.left = 150 + "px";
+			campo.style.top = 99 + "px";
+			campo.style.height = 402 + "px";
+			campo.style.width = 0 + "px";
+			campo.style.backgroundColor = "green";
+			document.getElementById("contenedor").appendChild(campo);
+			var posicion = campo.offsetWidth;
+			var id = setInterval(frame, 0.1);
+			function frame() {
+				if (posicion == 1000) {
+				  clearInterval(id);
+					creaLinea();
+				} else {
+				  posicion++; 
+				  campo.style.width = posicion + 'px'; 
+				}
+			}
+				
+		}
+		
+		function creaLinea(){
+			var linea = document.createElement("div");
+			linea.id = "lineaCreada";
+			linea.style.position = "absolute";
+			linea.style.left = 646 + "px";
+			linea.style.top = 100 + "px";
+			linea.style.height = 0 + "px";
+			linea.style.width = 20 + "px";
+			linea.style.backgroundColor = "white";
+			document.getElementById("contenedor").appendChild(linea);
+			var posicion = linea.offsetHeight;
+			var id = setInterval(frame, 0.1);
+			function frame() {
+				if (posicion == 402) {
+				  clearInterval(id);
+					document.getElementById("btn").disabled = false;
+				} else {
+				  posicion++; 
+				  linea.style.height = posicion + 'px'; 
+				}
+			}
+		}
+		
+		function creaJugadores1(){
+		for(var i = 0; i < document.getElementById("equipo1").value ; i++){
+			var jugadores1 = document.createElement("div");
+			jugadores1.className = "jug1";
+			contadorJug++;
+			jugadores1.id = "Jugador" + contadorJug;
+			console.log(jugadores1.id);
+			//Posiciona left
+			jugadores1.style.left = getRand(160, 610) + "px";
+			//Posiciona top
+			jugadores1.style.top = getRand(110, 465) + "px";
+			jugadores1.style.height = 30 + "px";
+			jugadores1.style.width = 30 + "px";
+			document.getElementById("contenedor").appendChild(jugadores1);
+			jugadores1.setAttribute("onclick","cuenta(this)");
+			jugadores1.value = 0;
+			}
+		}
+		
+		function creaJugadores2(){
+			for(var i = 0; i < document.getElementById("equipo2").value ; i++){
+				var jugadores2 = document.createElement("div");
+				jugadores2.className = "jug2";
+				contadorJug2++;
+				jugadores2.id = "Jugador" + contadorJug2;
+				console.log(jugadores2.id);
+				//Posiciona left
+				jugadores2.style.left = getRand(670,1110) + "px";
+				//Posiciona top
+				jugadores2.style.top = getRand(110, 465) + "px";
+				jugadores2.style.height = 30 + "px";
+				jugadores2.style.width = 30 + "px";
+				document.getElementById("contenedor").appendChild(jugadores2);
+				jugadores2.setAttribute("onclick","cuenta2(this)");
+				jugadores2.value = 0;
+			}
+			document.getElementById("btn").disabled = true;
+		}
+
+		function cuenta(jugadorescampo1){
+		
+			jugadorescampo1.value++;
+			document.getElementById("capaInfo").innerHTML= "EQUIPO 1: " + jugadorescampo1.id + " Nuevo valor: " + jugadorescampo1.value;
+		}
+			
+		function cuenta2(jugadorescampo2){
+		
+			jugadorescampo2.value++;
+			document.getElementById("capaInfo2").innerHTML= "EQUIPO 2: " + jugadorescampo2.id + " Nuevo valor: " + jugadorescampo2.value;
+		}
+		
+		function getRand(min, max) {
+			return Math.random() * (max - min) + min;
+		}
+		</script>
+	</head>
+	<body onload="creaCampo()">
+		<div id="contenedor"></div>
+		<div id="capaInfo"></div>
+		<div id="capaInfo2"></div>
+		Jugadores equipo 1: <input type="number" min="5" max="11" id="equipo1"> (mín 5 y máx 11)
+		Jugadores equipo 2: <input type="number" min="5" max="11" id="equipo2"> (mín 5 y máx 11)
+		<input type="button" id="btn" value="Añadir al Campo" onclick="creaJugadores1(),creaJugadores2()">
+	</body>
+</html>

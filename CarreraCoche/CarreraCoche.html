@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Coches</title>
+		<meta charset="UTF-8">
+		<style>
+			body{
+				background-image:url(carretera.jpg);
+				background-size:1300px 105px;
+				background-repeat:repeat;
+			}
+			
+			p {
+				color: white;
+				font-size: 16px;
+			}
+			
+			#contenedor{
+				position: absolute;
+			}
+			
+			.cochecito{
+				width: 200px;
+				height: 100px;
+				background-image:url(cochee.png);
+				background-size:150px 100px;
+				background-repeat: no-repeat;
+				position: absolute;
+			}
+			
+			#mensaje{
+				width: 300px;
+				height: 300px;
+				background-image:url("celebracion.gif-c200");
+				background-size:300px 300px;
+				background-repeat: no-repeat;
+				position:absolute;
+				left:500px;
+				top:200px;
+				display:none;
+			}
+			
+			#mensaje2{
+				width: 300px;
+				height: 300px;
+				background-image:url("loser2.gif");
+				background-size:300px 300px;
+				background-repeat: no-repeat;
+				position:absolute;
+				left:500px;
+				top:200px;
+				display:none;
+			}
+		</style>
+		<script> 
+			var coche;
+			var posicion = 20;
+			var numeroCoche = 0;
+			var idCoche = 1; //el primer coche es el 1 en vez de 0
+			var arrayIdCoche = [];
+			var leftBomba;
+			var dinero = 500;
+			var apostado = 0;
+			var cocheApuesta;
+			var cocheGanador;
+			var ganador = 0;
+			
+			function crearCoche(){	
+				document.getElementById("disponible").innerHTML=dinero + "€"; //cuando pulso el botón crear, aparece el dinero disponible
+				for (var i = 1; i <= document.getElementById("numeroCoche").value; i++){ //al no haber 0, i empieza por 1.  i debe ser <= en vez de <
+					coche = document.createElement("div");
+					coche.id = "coche" + idCoche;
+					arrayIdCoche[i]="coche" + idCoche;
+					coche.className = "cochecito";
+					coche.style.left = 30 + "px";
+					coche.style.top = posicion + "px";
+					posicion += 100;
+					document.getElementById("contenedor").appendChild(coche);
+					idCoche++;
+					document.getElementById("btn").disabled = true;
+				}
+			}
+			
+			function comenzar(){
+				for(var i = 1; i <= arrayIdCoche.length; i++){ //aquí tambien debe ser 1 y <=
+					var miCoche = document.getElementById(arrayIdCoche[i]);
+					var miCocheId = miCoche.id;
+					movimiento(miCocheId);
+				}	
+			}
+			
+			
+			function movimiento(miCocheId){
+				var miCoche = document.getElementById(miCocheId);
+				var posicion = miCoche.offsetLeft;
+				posicion = 30; //Cuando le doy de nuevo a comenzar carrera, se vuelven a la posición de origen
+				ganador = 0; //Para que vuelva a entrar a los bucles. 
+				var id = setInterval(frame, parseInt(getRand(1, 12)));
+				//var img = document.createElement
+					function frame() {
+						if (posicion == 1100) {
+							clearInterval(id);
+							cocheGanador = miCoche; //Guarda el coche que llegue primero
+							
+							apostado = document.getElementById("apuesta").value; //guarda el dinero apostado
+							if(apostado <= dinero){ //si la cantidad apostada es menor o igual al dinero disponible...
+								ganador ++; //para que entre en el bucle
+								cocheApuesta = "coche" + document.getElementById("numeroCoche2").value; //coche por el que ha apostado
+								
+								if ((cocheGanador.id == cocheApuesta) && (ganador == 1)){ //si ha llegado primero el coche por el que aposté.
+									document.getElementById("mensaje").style.display='block';
+									ganador ++; //esto evita que entre en el otro bucle con los coches restantes, ya que cambiaría a perdedor el estado.
+									dinero += apostado*document.getElementById("numeroCoche").value; 
+									document.getElementById("disponible").innerHTML=dinero + "€";
+								}
+								if ((cocheGanador.id != cocheApuesta) && (ganador == 1)){//que es el 1?
+									document.getElementById("mensaje2").style.display='block';
+									ganador ++; //tambien evita que se entre el el bucle de ganador si ya ha perdido la apuesta. 
+									dinero -= apostado;
+									document.getElementById("disponible").innerHTML=dinero + "€";
+								}
+								
+							}else{//Si se introduce mas dinero del disponible, aparece el mensaje.
+								document.getElementById("estado").innerHTML="No tienes suficiente dinero"; 
+							}
+							
+						} else {
+							posicion++; 
+							miCoche.style.left = posicion + 'px'; 
+						}
+					}
+				document.getElementById("mensaje").style.display='none';
+				document.getElementById("mensaje2").style.display='none';			
+			}
+			
+			/*function reanudar(){
+				var borrarcontenido = document.getElementsByClassName("cochecito");
+				var i = 0;
+				posicion=20;
+				do {
+					borrarcontenido[i].parentNode.removeChild(borrarcontenido[i]);	
+				}while(borrarcontenido.length > 0);
+				document.getElementById("btn").disabled = false;
+					document.getElementById("mensaje").style.display='none';
+					document.getElementById("mensaje2").style.display='none';	
+			}*/
+			
+			function getRand(min, max) { //Número aleatorio entre un máximo y un mínimo.
+				return Math.random() * (max - min) + min;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="elegirCoches"> 
+			<p>Número de coches: <input type="number" value="2" min="2" max="5" id="numeroCoche">
+			<input type="button" id="btn" value="Aceptar" onclick="crearCoche()">
+			<input type="button" id="btn2" value="Comenzar Carrera" onclick="comenzar()">
+			<!--<input type="button" id="btn3" value="Reanudar" onclick="reanudar()">-->
+			</p>
+		</div>
+		<div id="apostar">
+			<p>Apostar por:  <input type="number" value="1" min="1" max="5" id="numeroCoche2">
+			Cantidad a apostar:   <input type="number" value="2" min="1" id="apuesta">
+			Disponible: <span id="disponible" style="color:white"></span>
+			<div id="estado" style="color:white"></div></p>
+		</div>	
+		<div id="mensaje"></div>
+		<div id="mensaje2"></div>
+		<div id="estado"> </div>
+		<div id="contenedor"> </div>
+	</body>
+</html> 

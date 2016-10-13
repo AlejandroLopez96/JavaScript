@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Page Title</title>
+	<style>
+		#contenedor{
+			position: absolute;
+		}
+		#cochecito{
+			width: 200px;
+			height: 100px;
+			background-image:url(cochee.png);
+			background-size:150px 100px;
+			background-repeat: no-repeat;
+			position: absolute;
+		}
+		#puertecita{
+			width: 150px;
+			height: 300px;
+			background-image:url(muro.png);
+			background-size:150px 300px;
+			background-repeat: no-repeat;
+			position: absolute;
+		}
+	</style>
+	<script>
+		var coche;
+		var posicion1 = 0;
+		var posicion2 = 0;
+		var posicion3 = 0;
+		var posicion4 = 0;
+		var posicion5 = 0;
+		var id1;
+		var id2;
+		var id3;
+		var puerta;
+		var puertaAbierta = false;
+		
+		function creaCoche(){
+			coche = document.createElement("div");
+			coche.id = "cochecito";
+			coche.style.left = "30px";
+			coche.style.top = "300px";
+			document.getElementById("contenedor").appendChild(coche);
+			creaPuerta();
+		}
+		
+		function creaPuerta() {
+			puerta = document.createElement("div");
+			puerta.id = "puertecita";
+			puerta.style.left = "500px";
+			puerta.style.top = "150px";
+			document.getElementById("contenedor").appendChild(puerta);	
+		}
+		
+		function abrirPuerta(puerta){
+			posicion3 = puerta.offsetTop;
+			var id = setInterval(frame, 1);
+			function frame() {
+				if (posicion3 == 0) {
+				  clearInterval(id);
+					puertaAbierta = true;
+				} else {
+				  posicion3--; 
+				  puerta.style.top = posicion3 + 'px';
+				}
+			}
+		}
+		
+		function cerrarPuerta(puerta){
+			posicion5 = puerta.offsetTop;
+			var id = setInterval(frame, 1);
+			function frame() {
+				if (posicion5 == 150) {
+				  clearInterval(id);
+					puertaAbierta = false;
+				} else {
+				  posicion5++; 
+				  puerta.style.top = posicion5 + 'px';
+				}
+			}
+		}
+		
+		function movimiento(coche){
+			posicion1 = coche.offsetLeft;
+			id1 = setInterval(frame, 1);
+			function frame() {
+				if (posicion1 == 1150) {
+				  clearInterval(id1);
+					document.getElementById("btn2").disabled = false;
+					document.getElementById("btn").disabled = false;
+				} else {
+					if ((posicion1 == (puerta.offsetLeft - 150)) && !puertaAbierta){
+						clearInterval(id1);
+						document.getElementById("btn2").disabled = false;
+						document.getElementById("btn").disabled = false;
+					}else{
+						posicion1++; 
+						coche.style.left = posicion1 + 'px';
+						
+					}
+				}
+				
+			}
+			document.getElementById("btn").disabled = true;
+			document.getElementById("btn2").disabled = true;
+		}
+		
+		function movimiento2(coche){
+			posicion2 = coche.offsetLeft;
+			id2 = setInterval(frame, 1);
+			function frame() {
+				if (posicion2 == 0) {
+				  clearInterval(id2);
+					document.getElementById("btn").disabled = false;
+					document.getElementById("btn2").disabled = false;
+				} else {
+					if ((posicion2 == (puerta.offsetLeft + 150)) && !puertaAbierta){
+						clearInterval(id2);
+						document.getElementById("btn").disabled = false;
+						document.getElementById("btn2").disabled = false;
+					}else{
+						posicion2--; 
+						coche.style.left = posicion2 + 'px';
+						
+					}
+				}
+				
+			}
+			document.getElementById("btn").disabled = true;
+			document.getElementById("btn2").disabled = true;
+		}
+		
+		function stop(coche) {
+			posicion4 = coche.offsetLeft;
+					clearInterval(id1);
+					clearInterval(id2);
+				  clearInterval(id3);	
+					document.getElementById("btn").disabled = false;
+					document.getElementById("btn2").disabled = false;
+		}
+	</script>
+</head>
+<body onload="creaCoche()">
+	<div id="contenedor"></div>
+	<input type="button" id="btn" value="Avanzar" onclick="movimiento(coche)">
+	<input type="button" id="btn2" value="Retroceder" onclick="movimiento2(coche)">
+	<input type="button" id="btn4" value="Parar coche" onclick="stop(coche)">
+	<input type="button" id="btn3" value="Abrir puerta" onclick="abrirPuerta(puerta)">
+	<input type="button" id="btn5" value="Cerrar puerta" onclick="cerrarPuerta(puerta)">
+</body>
+</html>

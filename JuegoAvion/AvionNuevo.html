@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Derriba edificios</title>
+		<meta charset="UTF-8">
+	</head>
+	
+	<style>
+		body {
+			background-image:url("campo.jpg");
+			background-size:1600px 725px;
+		}
+		
+		#contenedor{
+			position: absolute;
+		}
+						
+		#avion{
+			top:100px;
+			left:50px;
+			width:130px;
+			height:130px;	
+			background-image:url(airplane.png);
+			background-size:120px 120px;
+			background-repeat: no-repeat;
+			position:absolute;
+		}
+		
+		.bombazo {
+			width: 50px;
+			height: 50px;
+			background-image:url(bomba.png);
+			background-size:50px 50px;
+			background-repeat: no-repeat;
+			position: absolute;
+		}
+		
+		#explotido {
+			width: 130px;
+			height: 130px;
+			background-image:url(explosion.gif-c200);
+			background-size:120px 120px;
+			background-repeat: no-repeat;
+			position: absolute;
+		}
+		
+		.estiloEdificio{
+			width: 130px;
+			height: 130px;
+			background-image:url(edificio.png);
+			background-size:120px 120px;
+			background-repeat: no-repeat;
+			position: absolute;
+		}
+		
+	</style>
+	
+	<script>
+		// capa.setAttribute("onclick","eliminarcapa(this)");
+		var vacio = "";
+		var contador = 0;
+		var cuentaBombas = 5;
+		var avioncreado; 
+		var nivel = 0;
+		var edificiosDerribados = 0;
+		var cuentaEdificio = 0;
+		var posLeftEdif;
+		var posLeftEdif2 = [];
+		var nombreEdif = [];
+		var velocidadAvion = 30;
+		var borra = 0;
+		//var indice = 0;
+		
+		function crear(){
+		nivel++;
+		borra++;
+			if(borra == 2){
+				avioncreado.parentNode.removeChild(avioncreado);
+				cuentaBombas = 5;
+				borra= 1;
+			}
+			
+			avioncreado = document.createElement("div");
+			//Crea el elemento div y lo guarda en circuloCreado
+			avioncreado.setAttribute("onclick","crearBomba(this)"); //Le pone atributo onclick
+			//avioncreado.setAttribute("ondblclick","movimiento(this)"); //Le pone atributo onclick
+			avioncreado.id = "avion"; //Lo pone en la clase "circulo"
+			document.getElementById("infoBombas").innerHTML="Bombas: " + cuentaBombas;
+			document.getElementById("infoNivel").innerHTML="Nivel: " + nivel;
+			document.getElementById("infoDerribado").innerHTML="Derribado: " + edificiosDerribados;
+            document.getElementById("contenedor").appendChild(avioncreado);	//Coloca el circulo en el contenedor "CajaCirculos"
+			avioncreado.style.left = "50px"; 
+			avioncreado.style.top = "30px"; 	
+			movimiento(avioncreado);
+			
+				var i;
+				for (i = 0; i < 5; i++){
+					creaEdificio(i);
+				}
+				
+		}
+		
+		//Coloa los edificios
+		
+		function creaEdificio(indice){
+			var edificio = document.createElement("div");
+			edificio.className = "estiloEdificio";	
+			cuentaEdificio++;
+			edificio.id = cuentaEdificio + "edif";
+			edificio.style.top = 430 + "px";
+			posLeftEdif = parseInt(getRand(40, 1100)); 
+			edificio.style.left = posLeftEdif + "px"
+			posLeftEdif2[indice] = posLeftEdif;
+			nombreEdif[indice] = edificio.id;
+			document.getElementById("contenedor").appendChild(edificio);
+			
+		}
+		
+				
+		function movimiento(avioncreado){
+			var posicion = avioncreado.offsetLeft;
+			var suma = 1;
+			switch(nivel) {
+				case 1:
+					velocidadAvion = 24;
+				break;
+				case 2:
+					velocidadAvion = 17;
+				break;
+				case 3:
+					velocidadAvion = 10;
+				break;
+				case 4:
+					velocidadAvion = 6;
+				break;
+				case 5:
+					velocidadAvion = 1;
+				break;
+				case 6:
+					suma = 2;
+					velocidadAvion = 1;
+				break;
+				case 7:
+					suma = 3;
+					velocidadAvion = 1;
+				break;
+				case 7:
+					suma = 5;
+					velocidadAvion = 1;
+				break;
+				case 8:	
+					empezarNuevo = "<button onclick=\"location.reload()\">Nueva partida</button>";
+					document.getElementById("infoPerdido").innerHTML="<span>Fin del juego</span><br>" + empezarNuevo;
+					document.getElementById("infoPerdido2").innerHTML="Fin del juego. Superaste todos los niveles.";
+					cuentaBombas = 0;
+					document.getElementById("infoBombas").innerHTML="Bombas: " + cuentaBombas;
+			} 
+			
+			console.log(velocidadAvion);
+			console.log(suma);
+			var id = setInterval(frame, velocidadAvion);
+			function frame() {
+				if ((posicion == 1200) || (posicion == 1201)) {
+				avioncreado.style.left ='0px'; 
+				posicion = 0;
+				} else {
+				  posicion += suma; 
+				  avioncreado.style.left = posicion + 'px';  
+				}
+	
+			}
+		}
+		function crearBomba() {
+			
+			if (cuentaBombas > 0){
+				cuentaBombas--;
+				//crear capa
+				document.getElementById("infoBombas").innerHTML="Bombas: " + cuentaBombas;
+				var bomba = document.createElement("div");
+				//asigna clase
+				bomba.className = "bombazo";
+				//bomba.style.backgroundColor = newColor;
+				//Left aleatorio
+				bomba.style.left = avioncreado.offsetLeft + "px";
+				//Top comienza en lo alto del agua
+				var altura = avioncreado.offsetTop;
+				altura += 45;
+				bomba.style.top = altura + "px";
+				//agregamos la capa comida a la pecera
+				document.getElementById("contenedor").appendChild(bomba);
+				//Le doy un  + "comida" al id para que se diferencie del id de pez y asi tendre 1 2 3 para los peces y 1comida 2comida 3comida para las comidas
+				bomba.id = contador + "bomba";
+				contador++;
+				//Asignamos el evento onclick a la funcion
+				//Aqui llamo a la funcion caidaComida para el movimiento
+				caidaBomba(bomba.id);
+			}	
+        }
+		
+		//caida de la bomba
+		function caidaBomba(id){
+			//Obtengo el objeto capa de la comida
+            var miBomba = document.getElementById(id);
+			//Incrementa el top hasta que llega a 420
+            var idinterval = setInterval(function () {
+				//CAlcula su top lo mismo que offsetTop
+                var topreal = parseInt(miBomba.style.top);
+				var leftreal = parseInt(miBomba.style.left);
+                if (topreal < 380) {
+                    miBomba.style.top = (topreal += 2) + "px";
+                } else {
+                    clearInterval(idinterval);
+					explosion(topreal,leftreal);
+					miBomba.parentNode.removeChild(miBomba);
+					
+                }
+            }, 10)	
+		}
+		
+		//Hace el efecto de una explosión cuando el misil toca en el final. 
+		function explosion(topreal,leftreal){
+			var explosion = document.createElement("div");
+			explosion.id = "explotido";
+			explosion.style.top = topreal + "px";
+			explosion.style.left = leftreal + "px";
+			document.getElementById("contenedor").appendChild(explosion);
+			var contadorExplosion = 0;
+			
+			var exploInterval = setInterval(function () { 
+				contadorExplosion++;  //Cuando pasa un seg, borra el div explosión
+				if(contadorExplosion == 1){
+					explosion.parentNode.removeChild(explosion);	
+					clearInterval(exploInterval);
+					derribaEdificios(leftreal);
+				}	
+			}, 1000)
+			 
+		} 
+		var derribado = false;
+		function derribaEdificios(leftreal){
+		
+			for(var i = 0; i<posLeftEdif2.length; i++){
+				if((leftreal >= posLeftEdif2[i]-50) && (leftreal <= posLeftEdif2[i]+50)){
+					var edif = document.getElementById(nombreEdif[i]);
+					edif.parentNode.removeChild(edif);	
+					delete nombreEdif[i];
+					delete posLeftEdif2[i];
+					edificiosDerribados++;
+					document.getElementById("infoDerribado").innerHTML="Derribado: " + edificiosDerribados;
+				}
+			}
+			
+			if(edificiosDerribados == cuentaEdificio){
+				crear();
+				derribado = true;
+				document.getElementById("infoNivel").innerHTML="Nivel: " + nivel;
+			}
+			
+			if(cuentaBombas == 0){
+				var empezarNuevo;
+				empezarNuevo = "<button onclick=\"location.reload()\">Nueva partida</button>";
+				document.getElementById("infoPerdido").innerHTML=empezarNuevo;
+			}
+		}
+		
+		function getRand(min, max) { //Número aleatorio entre un máximo y un mínimo.
+            return Math.random() * (max - min) + min;
+        }
+		/*	
+		function borrarTodo(){ //Borra todos los circulos creados. 
+			var todoCiruculos = document.getElementById("cajaCirculos");//Guardo el div contenedor de circulos en la variable.
+			todoCiruculos.parentNode.removeChild(todoCiruculos); //Desde el contenedor padre, borra el contenedor de los cículos.
+			
+			var cajaCirculos = document.createElement("div"); //Vuelve a crear el contenedor
+			cajaCirculos.id = "cajaCirculos"; //Le asigna una id.
+			document.getElementById("contenedor").appendChild(cajaCirculos); //Coloca el contenedor dentro del div padre "contenedor". 
+			contador_capaid = 0;
+			
+		}*/
+	</script>
+	
+	<body onload="crear()">
+	
+		<div id="infoNivel"></div>	
+		<div id="infoBombas"></div>
+		<div id="infoDerribado"></div>
+		<div id="infoPerdido"></div>
+		<div id="infoPerdido2"></div>
+		<div id="capa"></div>
+		
+		<div id ="contenedor">
+
+		</div>
+		
+	</body>
+</html> 
